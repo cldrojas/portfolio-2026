@@ -1,46 +1,70 @@
-# Astro Starter Kit: Basics
+# Portfolio 2026 — Front End Engineer
 
-```sh
-pnpm create astro@latest -- --template basics
+Personal portfolio website built with **Astro 6**, **React 19**, and **TailwindCSS 4**.
+
+## 🚀 Tech Stack
+
+- **Framework**: Astro 6 (SSR / server output)
+- **UI**: React 19 + TailwindCSS 4
+- **Deploy**: Cloudflare Pages (production) · Node.js standalone (dev)
+- **Package Manager**: pnpm
+
+## 📁 Project Structure
+
 ```
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
 /
 ├── public/
 │   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
+├── src/
+│   ├── assets/              # Static assets (SVGs, images)
+│   ├── components/
+│   │   ├── common/          # Navigation, Footer, ThemeToggle
+│   │   └── sections/        # Hero, About, Skills, Projects, Contact
+│   ├── data/                # Projects & categories data
+│   ├── layouts/             # Base layout (Layout.astro)
+│   ├── pages/
+│   │   ├── index.astro      # Main page
+│   │   └── api/contact.ts   # Contact form endpoint
+│   └── styles/global.css    # Global styles
+├── astro.config.mjs         # Astro config (dual adapter)
+├── tailwind.config.mjs      # Tailwind config
 └── package.json
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
-
 ## 🧞 Commands
 
-All commands are run from the root of the project, from a terminal:
+| Command | Action |
+|---------|--------|
+| `pnpm install` | Install dependencies |
+| `pnpm dev` | Start dev server at `localhost:4321` |
+| `pnpm build` | Build production site to `./dist/` |
+| `pnpm preview` | Preview build locally |
+| `pnpm astro ...` | Run Astro CLI commands |
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
+## 🌐 Deployment
 
-## 👀 Want to learn more?
+**Production**: Cloudflare Pages (via `@astrojs/cloudflare` adapter)  
+**Development**: Node.js standalone server (via `@astrojs/node` adapter)
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+The adapter is selected automatically based on `NODE_ENV`:
+- `production` → Cloudflare Pages
+- `development` → Node.js
+
+Connect your repository to Cloudflare Pages for automatic deployments on push to `main`.
+
+## 📧 Contact Form
+
+The contact form submits to `/api/contact.ts` (Astro API route). Configure your email service in that file.
+
+## 🎨 Features
+
+- Dark/Light theme toggle (persisted in localStorage)
+- Responsive navigation with mobile menu
+- Project filtering by category (Frontend / Full Stack / Mobile)
+- Skills showcase with animated progress bars
+- Contact form with validation
+- Fully responsive, accessible, SEO-ready
+
+---
+
+Built with ❤️ using Astro
