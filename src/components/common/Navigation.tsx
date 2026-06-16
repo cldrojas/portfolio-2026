@@ -37,10 +37,11 @@ export function Navigation() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-light/80 dark:bg-dark-950/80 backdrop-blur-md shadow-md'
-          : 'bg-transparent'
+    className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-light/80 dark:bg-dark-950/80 backdrop-blur-md shadow-md
+      ${
+      isScrolled
+        ? 'bg-light/80 dark:bg-dark-950/80 backdrop-blur-md shadow-md'
+        : 'bg-transparent'
       }`}
     >
       <nav className="container-custom">
