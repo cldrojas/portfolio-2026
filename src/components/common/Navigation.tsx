@@ -51,7 +51,7 @@ export function Navigation() {
             href="#"
             className="text-xl font-bold text-dark-900 dark:text-light hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
           >
-            Portfolio
+            &#10218;DR&#x27EB;
           </a>
 
           {/* Desktop Navigation */}
