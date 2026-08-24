@@ -1,0 +1,44 @@
+name: Rollback
+
+# Revierte producción a una versión previa del worker en segundos,
+# sin rebuild (PRD §8). Listar versiones: `npx wrangler versions list`.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version ID destino (vacío = versión anterior inmediata)'
+        required: false
+        default: ''
+
+concurrency:
+  group: production-worker
+  cancel-in-progress: false
+
+env:
+  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+jobs:
+  rollback:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Rollback
+        run: |
+          if [ -n "${{ inputs.version }}" ]; then
+            npx wrangler rollback "${{ inputs.version }}"
+          else
+            npx wrangler rollback
+          fi
+
+      - name: Smoke test post-rollback
+        run: node scripts/smoke-test.mjs "https://portfolio-2026.${{ vars.WORKERS_SUBDOMAIN }}.workers.dev"

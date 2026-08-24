@@ -2,10 +2,16 @@
   "name": "portfolio-2026",
   "type": "module",
   "version": "0.0.1",
+  "packageManager": "pnpm@11.6.0",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "build:prod": "NODE_ENV=production astro build",
     "preview": "astro preview",
+    "preview:workers": "pnpm run build:prod && wrangler dev",
+    "deploy": "pnpm run build:prod && wrangler deploy",
+    "cf:setup": "bash scripts/cf-setup.sh",
+    "smoke:test": "node scripts/smoke-test.mjs",
     "astro": "astro"
   },
   "dependencies": {

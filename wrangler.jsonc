@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "portfolio-2026",
+  "compatibility_date": "2026-04-15",
+  "compatibility_flags": ["nodejs_compat"],
+  // main, kv_namespaces[SESSION], images[IMAGES] y assets[ASSETS]:
+  // los completa @astrojs/cloudflare v13 en build time (cloudflareConfigCustomizer).
+  // El KV SESSION requiere id real tras `wrangler kv namespace create SESSION`
+  // (ver scripts/cf-setup.sh). Sin id, el deploy falla validación de wrangler.
+  "assets": {
+    "directory": "./dist/client",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

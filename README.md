@@ -6,7 +6,7 @@ Personal portfolio website built with **Astro 6**, **React 19**, and **TailwindC
 
 - **Framework**: Astro 6 (SSR / server output)
 - **UI**: React 19 + TailwindCSS 4
-- **Deploy**: Cloudflare Pages (production) · Node.js standalone (dev)
+- **Deploy**: Cloudflare Workers (`@astrojs/cloudflare` v13) · Node.js standalone (dev)
 - **Package Manager**: pnpm
 
 ## 📁 Project Structure
@@ -36,21 +36,65 @@ Personal portfolio website built with **Astro 6**, **React 19**, and **TailwindC
 | Command | Action |
 |---------|--------|
 | `pnpm install` | Install dependencies |
-| `pnpm dev` | Start dev server at `localhost:4321` |
-| `pnpm build` | Build production site to `./dist/` |
+| `pnpm dev` | Start dev server at `localhost:4321` (adapter Node) |
+| `pnpm build` | Build dev-adapter site to `./dist/` |
+| `pnpm build:prod` | Build con adapter Cloudflare (usado por CI) |
 | `pnpm preview` | Preview build locally |
+| `pnpm cf:setup` | Crea KV `SESSION` y registra id en `wrangler.jsonc` (idempotente) |
+| `pnpm smoke:test <url>` | Smoke test contra URL deployada |
 | `pnpm astro ...` | Run Astro CLI commands |
 
 ## 🌐 Deployment
 
-**Production**: Cloudflare Pages (via `@astrojs/cloudflare` adapter)  
-**Development**: Node.js standalone server (via `@astrojs/node` adapter)
+**Producción**: Cloudflare Workers vía `@astrojs/cloudflare` v13 (Workers Static Assets + SSR).
+**Desarrollo**: Node.js standalone vía `@astrojs/node`.
 
-The adapter is selected automatically based on `NODE_ENV`:
-- `production` → Cloudflare Pages
-- `development` → Node.js
+El adaptador se selecciona por `NODE_ENV`:
+- `production` → Cloudflare (`pnpm build:prod`)
+- otro valor → Node.js
 
-Connect your repository to Cloudflare Pages for automatic deployments on push to `main`.
+> ⚠️ **El build de producción corre en GitHub Actions, no en local.** El binario
+> `workerd` (invocado por miniflare durante el build del adapter) requiere
+> macOS 13.5+; esta máquina tiene 12.6. En Linux/CI funciona sin problema.
+> Local: desarrollar con `pnpm dev`; desplegar = push.
+
+### Pipeline (.github/workflows/deploy.yml)
+
+| Evento | Acción |
+|---|---|
+| PR | build + `wrangler versions upload` → preview URL + smoke test |
+| push a `main` / manual | build + `wrangler deploy` → producción + smoke test |
+
+Sin `CLOUDFLARE_API_TOKEN` configurado, el pipeline solo valida el build
+(los jobs de deploy se saltan elegantemente).
+
+### Setup único (una vez)
+
+1. Crear API Token en Cloudflare: **My Profile → API Tokens → "Edit Cloudflare Workers"**
+   (permisos: Workers Scripts:Edit + Account Settings:Read; añadir *Workers KV Storage:Edit* para el bootstrap del KV).
+2. Guardarlo en el repo:
+   ```bash
+   gh secret set CLOUDFLARE_API_TOKEN
+   gh secret set CLOUDFLARE_ACCOUNT_ID   # opcional si el token es de una sola cuenta
+   ```
+3. Push a `main`. El pipeline crea el KV `SESSION` si falta, deploya y verifica con smoke tests.
+
+### Operación
+
+```bash
+# Ver logs en vivo (requiere auth local o token)
+npx wrangler tail portfolio-2026
+
+# Listar versiones deployadas
+npx wrangler versions list
+
+# Rollback inmediato a versión anterior
+gh workflow run rollback.yml            # última versión
+gh workflow run rollback.yml -f version=<VERSION_ID>
+```
+
+Smoke test post-deploy: `GET /` (200 + HTML), `POST /api/contact` válido (200 +
+`success:true`) e inválido (400). Falla cualquier criterio = deploy marcado rojo.
 
 ## 📧 Contact Form
 
