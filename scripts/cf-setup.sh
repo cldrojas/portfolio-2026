@@ -26,9 +26,21 @@ fi
 
 if [ -z "$ID" ]; then
   # Ya existe (u otro fallo): buscar id por título en la lista.
+  # Visibilidad: mostrar el motivo real del fallo del create (antes se tragaba).
   echo "Create falló o ya existe; buscando namespace existente..."
-  ID="$(npx wrangler kv namespace list 2>/dev/null \
-    | node -e 'let d="";process.stdin.on("data",c=>d+=c).on("end",()=>{try{const ns=JSON.parse(d);const m=ns.find(n=>(n.title||"").endsWith("-'"${BINDING}"'")||(n.title||"")==='"${BINDING}"'');console.log(m?m.id:"")}catch{console.log("")}})')"
+  printf '  motivo: %s\n' "${CREATE_OUT:-desconocido}" >&2
+  ID="$(printf '%s\n' "$(npx wrangler kv namespace list 2>/dev/null)" \
+    | BINDING="$BINDING" node -e '
+let d = "";
+process.stdin.on("data", c => d += c);
+process.stdin.on("end", () => {
+  try {
+    const ns = JSON.parse(d);
+    const b = process.env.BINDING;
+    const m = ns.find(n => (n.title || "").endsWith("-" + b) || (n.title || "") === b);
+    console.log(m ? m.id : "");
+  } catch { console.log(""); }
+});')"
 fi
 
 if [ -z "$ID" ]; then

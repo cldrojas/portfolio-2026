@@ -95,7 +95,7 @@ Notas:
 
 - **PRs** → build + `wrangler versions upload` (preview URL por versión, sin tocar producción).
 - **Push a `main`** → build + `wrangler deploy`.
-- Secret requerido: `CLOUDFLARE_API_TOKEN` (permisos: Workers Scripts:Edit, Account Settings:Read). `CLOUDFLARE_ACCOUNT_ID` como variable.
+- Secret requerido: `CLOUDFLARE_API_TOKEN`. Permisos mínimos: **Account · Workers Scripts:Edit**, **Account · Workers KV Storage:Edit** (necesario: `cf-setup.sh` crea el namespace SESSION desde CI), **Account · Account Settings:Read**. `CLOUDFLARE_ACCOUNT_ID` como variable.
 - Cache de dependencias pnpm entre runs.
 
 ### 4.4 Imágenes
@@ -155,3 +155,4 @@ Total estimado: ~1 día hábil.
 | Fecha | Cambio |
 |---|---|
 | 2026-08-24 | Reubicado desde `docs/prd/` → `docs/requirements/`. Corregido contrato del adaptador v13: entrypoint real (`@astrojs/cloudflare/entrypoints/server`, no `dist/_worker.js`), bindings automáticos (SESSION/IMAGES/ASSETS), KV de sesiones como prerequisito, typo en comando rollback. |
+| 2026-08-24 | Corregidos permisos del API token: se agrega Workers KV Storage:Edit (cf-setup.sh crea el KV SESSION desde CI). |

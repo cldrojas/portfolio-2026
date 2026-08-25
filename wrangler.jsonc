@@ -3,6 +3,7 @@
   "name": "portfolio-2026",
   "compatibility_date": "2026-04-15",
   "compatibility_flags": ["nodejs_compat"],
+  "kv_namespaces": [{ "binding": "SESSION", "id": "6e18fd8909dc41a8818ba0ef95fbd89f" }],
   // main, kv_namespaces[SESSION], images[IMAGES] y assets[ASSETS]:
   // los completa @astrojs/cloudflare v13 en build time (cloudflareConfigCustomizer).
   // El KV SESSION requiere id real tras `wrangler kv namespace create SESSION`
