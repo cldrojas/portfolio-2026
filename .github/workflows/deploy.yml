@@ -83,8 +83,15 @@ jobs:
       - name: Upload preview version
         id: upload
         run: |
-          OUT="$(npx wrangler versions upload 2>&1)"
+          # El build emite su propio wrangler.json en dist/server/ (con main,
+          # assets y bindings completos). Deployar desde la raíz falla: no hay main.
+          # set +e: capturar output aunque falle (set -e se lo tragaba entero).
+          set +e
+          OUT="$(npx wrangler versions upload -c dist/server/wrangler.json 2>&1)"
+          RC=$?
+          set -e
           echo "$OUT"
+          [ "$RC" -eq 0 ] || exit "$RC"
           URL="$(printf '%s\n' "$OUT" | grep -oE 'https://[a-z0-9.-]+\.workers\.dev' | head -1)"
           echo "preview_url=${URL}" >> "$GITHUB_OUTPUT"
 
@@ -118,8 +125,14 @@ jobs:
       - name: Deploy
         id: deploy
         run: |
-          OUT="$(npx wrangler deploy 2>&1)"
+          # El entrypoint vive en dist/server/wrangler.json (emitido por el build).
+          # set +e: capturar output aunque falle (set -e se lo tragaba entero).
+          set +e
+          OUT="$(npx wrangler deploy -c dist/server/wrangler.json 2>&1)"
+          RC=$?
+          set -e
           echo "$OUT"
+          [ "$RC" -eq 0 ] || exit "$RC"
           URL="$(printf '%s\n' "$OUT" | grep -oE 'https://[a-z0-9.-]+\.workers\.dev' | head -1)"
           echo "url=${URL}" >> "$GITHUB_OUTPUT"
 
