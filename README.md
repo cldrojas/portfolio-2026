@@ -62,8 +62,12 @@ El adaptador se selecciona por `NODE_ENV`:
 
 | Evento | Acción |
 |---|---|
-| PR | build + `wrangler versions upload` → preview URL + smoke test |
-| push a `main` / manual | build + `wrangler deploy` → producción + smoke test |
+| PR | build + `wrangler versions upload -c dist/server/wrangler.json` → preview URL + smoke test |
+| push a `main` / manual | build + `wrangler deploy -c dist/server/wrangler.json` → producción + smoke test |
+
+> ℹ️ El build emite su propio `dist/server/wrangler.json` (con `main`, assets y
+> bindings completos). Deployar desde la raíz falla: el `wrangler.jsonc` raíz no
+> declara `main` por diseño del adaptador v13.
 
 Sin `CLOUDFLARE_API_TOKEN` configurado, el pipeline solo valida el build
 (los jobs de deploy se saltan elegantemente).

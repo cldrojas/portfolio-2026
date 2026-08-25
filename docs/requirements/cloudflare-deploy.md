@@ -115,14 +115,14 @@ Regla: producción solo desde `main`. Nada se deploya a mano desde laptops — e
 
 ## 6. Criterios de aceptación
 
-- [ ] KV namespace `SESSION` creado y accesible por la cuenta de Cloudflare
-- [ ] `pnpm build:prod` compila sin errores y produce el worker + assets estáticos
-- [ ] `wrangler dev` sirve el sitio localmente contra el runtime de Workers (no Node)
-- [ ] PR abre preview URL funcional (SSR + assets cargando)
-- [ ] Merge a `main` deploya a producción automáticamente en < 5 min
-- [ ] Sitio responde 200 en `/` y en una ruta dinámica de ejemplo
-- [ ] Logs visibles en dashboard Cloudflare
-- [ ] Documentación breve en README: cómo deployar manual y cómo ver logs
+- [x] KV namespace `SESSION` creado y accesible por la cuenta de Cloudflare
+- [x] `pnpm build:prod` compila sin errores y produce el worker + assets estáticos (verificado en CI; en local requiere macOS 13.5+ por workerd/miniflare)
+- [ ] `wrangler dev` sirve el sitio localmente contra el runtime de Workers (no Node) — bloqueado en esta máquina (macOS 12.6 < 13.5 requerido)
+- [ ] PR abre preview URL funcional (SSR + assets cargando) — job implementado, pendiente de verificar con un PR real
+- [x] Merge a `main` deploya a producción automáticamente en < 5 min (~1.5 min verificado)
+- [x] Sitio responde 200 en `/` y en una ruta dinámica de ejemplo (`/` → 200; `POST /api/contact` ejecuta SSR: 400 con validación)
+- [x] Logs visibles en dashboard Cloudflare (`observability.enabled` + `wrangler tail`)
+- [x] Documentación breve en README: cómo deployar manual y cómo ver logs
 
 ## 7. Riesgos
 
